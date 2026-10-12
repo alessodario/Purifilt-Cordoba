@@ -4208,6 +4208,119 @@
             }
         };
 
+        // ----------------------------------------------------
+        // CLOUD DATABASE INTEGRATION (NEON POSTGRESQL)
+        // ----------------------------------------------------
+        const CloudDB = {
+            ENDPOINT: "https://ep-late-fire-b7hdr8nr-pooler.c-13.us-east-1.aws.neon.tech/sql",
+            CONN_STR: "postgresql://neondb_owner:npg_04WGzFEYceku@ep-late-fire-b7hdr8nr-pooler.c-13.us-east-1.aws.neon.tech/neondb?sslmode=require",
+
+            async query(sql) {
+                try {
+                    const resp = await fetch(this.ENDPOINT, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Neon-Connection-String": this.CONN_STR
+                        },
+                        body: JSON.stringify({ query: sql })
+                    });
+                    if (!resp.ok) {
+                        const err = await resp.json().catch(() => ({}));
+                        console.warn("Neon CloudDB error:", err);
+                        return null;
+                    }
+                    const data = await resp.json();
+                    return data.rows || [];
+                } catch (e) {
+                    console.warn("CloudDB offline o error de red:", e);
+                    return null;
+                }
+            },
+
+            async pushQuote(q) {
+                if (!q) return;
+                try {
+                    const escape = (str) => (str ? String(str).replace(/'/g, "''") : "");
+                    const itemsJson = JSON.stringify(q.items || []).replace(/'/g, "''");
+                    const sql = `
+                        INSERT INTO quotes (
+                            id, customer, cuit, phone, email, address, vehicle, 
+                            pay_method, condition_detail, subtotal, discount, discount_label, total, items
+                        ) VALUES (
+                            '${escape(q.id)}',
+                            '${escape(q.customer)}',
+                            '${escape(q.cuit)}',
+                            '${escape(q.phone)}',
+                            '${escape(q.email)}',
+                            '${escape(q.address)}',
+                            '${escape(q.vehicle)}',
+                            '${escape(q.payMethod)}',
+                            '${escape(q.conditionDetail)}',
+                            ${Number(q.subtotal) || 0},
+                            ${Number(q.discount) || 0},
+                            '${escape(q.discountLabel)}',
+                            ${Number(q.total) || 0},
+                            '${itemsJson}'::jsonb
+                        )
+                        ON CONFLICT (id) DO UPDATE SET
+                            customer = EXCLUDED.customer,
+                            cuit = EXCLUDED.cuit,
+                            phone = EXCLUDED.phone,
+                            email = EXCLUDED.email,
+                            address = EXCLUDED.address,
+                            vehicle = EXCLUDED.vehicle,
+                            pay_method = EXCLUDED.pay_method,
+                            condition_detail = EXCLUDED.condition_detail,
+                            subtotal = EXCLUDED.subtotal,
+                            discount = EXCLUDED.discount,
+                            discount_label = EXCLUDED.discount_label,
+                            total = EXCLUDED.total,
+                            items = EXCLUDED.items;
+                    `;
+                    await this.query(sql);
+                } catch (e) {
+                    console.warn("Error enviando cotización a Neon:", e);
+                }
+            },
+
+            async fetchAllQuotes() {
+                try {
+                    const rows = await this.query("SELECT * FROM quotes ORDER BY date DESC");
+                    if (!rows) return null;
+                    return rows.map(r => ({
+                        id: r.id,
+                        date: r.date,
+                        customer: r.customer,
+                        cuit: r.cuit,
+                        phone: r.phone,
+                        email: r.email,
+                        address: r.address,
+                        vehicle: r.vehicle,
+                        payMethod: r.pay_method,
+                        conditionDetail: r.condition_detail,
+                        subtotal: Number(r.subtotal) || 0,
+                        discount: Number(r.discount) || 0,
+                        discountLabel: r.discount_label,
+                        total: Number(r.total) || 0,
+                        items: r.items || []
+                    }));
+                } catch (e) {
+                    console.warn("Error cargando de Neon:", e);
+                    return null;
+                }
+            },
+
+            async deleteQuote(quoteId) {
+                if (!quoteId) return;
+                try {
+                    await this.query(`DELETE FROM quotes WHERE id = '${quoteId.replace(/'/g, "''")}'`);
+                } catch (e) {
+                    console.warn("Error eliminando en Neon:", e);
+                }
+            }
+        };
+
         // GLOBAL APPLICATION STORE
         const AppStore = {
             products: [],
@@ -4264,6 +4377,43 @@
                     const storedQuotes = localStorage.getItem(this.STORAGE_KEY_QUOTES);
                     this.quotes = storedQuotes ? (JSON.parse(storedQuotes) || []) : [];
 
+                    // Sincronización asíncrona bidireccional con Neon PostgreSQL Cloud
+                    if (window.CloudDB) {
+                        CloudDB.fetchAllQuotes().then(cloudQuotes => {
+                            if (cloudQuotes && Array.isArray(cloudQuotes)) {
+                                // Unificar registros por ID asegurando que los de la nube estén presentes
+                                const existingIds = new Set(this.quotes.map(q => q.id));
+                                let updated = false;
+
+                                cloudQuotes.forEach(cq => {
+                                    if (!existingIds.has(cq.id)) {
+                                        this.quotes.push(cq);
+                                        existingIds.add(cq.id);
+                                        updated = true;
+                                    }
+                                });
+
+                                // Si hay cotizaciones locales que no están en la nube, enviarlas a Neon
+                                const cloudIds = new Set(cloudQuotes.map(cq => cq.id));
+                                this.quotes.forEach(lq => {
+                                    if (!cloudIds.has(lq.id)) {
+                                        CloudDB.pushQuote(lq);
+                                    }
+                                });
+
+                                if (updated) {
+                                    this.quotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+                                    try {
+                                        localStorage.setItem(this.STORAGE_KEY_QUOTES, JSON.stringify(this.quotes));
+                                    } catch(e) {}
+                                    if (window.QuotesModule && typeof QuotesModule.render === "function") {
+                                        QuotesModule.render();
+                                    }
+                                }
+                            }
+                        }).catch(err => console.warn("Sincronización Neon en segundo plano:", err));
+                    }
+
                     // Hydrate any heavy Base64 images from IndexedDB if they exist
                     if (window.ImageStore) {
                         ImageStore.getAll().then(imgMap => {
@@ -4302,14 +4452,12 @@
                     localStorage.setItem(this.STORAGE_KEY_QUOTES, JSON.stringify(this.quotes));
                 } catch (err) {
                     console.warn("Storage quota exceeded in localStorage, saving images to IndexedDB fallback...", err);
-                    // If localStorage exceeded quota due to large images, save them in IndexedDB and keep products light
                     if (window.ImageStore) {
                         this.products.forEach(p => {
                             if (p.imageUrl && p.imageUrl.startsWith("data:")) {
                                 ImageStore.set(p.id, p.imageUrl);
                             }
                         });
-                        // Create a lightweight copy for localStorage
                         try {
                             const lightProducts = this.products.map(p => {
                                 if (p.imageUrl && p.imageUrl.startsWith("data:") && p.imageUrl.length > 50000) {
@@ -4347,6 +4495,12 @@
                 if (!quote) return;
                 this.quotes.unshift(quote);
                 this.saveToStorage();
+
+                // Persistir inmediatamente en la base de datos Neon PostgreSQL en la nube
+                if (window.CloudDB) {
+                    CloudDB.pushQuote(quote);
+                }
+
                 if (window.QuotesModule && typeof QuotesModule.render === "function") {
                     QuotesModule.render();
                 }
@@ -5705,6 +5859,12 @@
                 if (confirm(`¿Está seguro de que desea eliminar la cotización ${quoteId} de la base de datos?`)) {
                     AppStore.quotes = AppStore.quotes.filter(q => q.id !== quoteId);
                     AppStore.saveToStorage();
+
+                    // Eliminar también en Neon PostgreSQL Cloud
+                    if (window.CloudDB) {
+                        CloudDB.deleteQuote(quoteId);
+                    }
+
                     this.render();
                     Toast.show(`Cotización ${quoteId} eliminada.`, "info");
                 }
