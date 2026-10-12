@@ -2678,14 +2678,14 @@
                         <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; text-align: center;">Paso 1: ¿Qué tipo de aplicación necesitas?</h3>
                         <p style="color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Selecciona el segmento para el cual buscas equipamiento.</p>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
-                            <div class="glass-card wizard-option-card" onclick="WizardModule.selectCategory('Línea Automotriz')" style="cursor: pointer; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); border-radius: 12px;">
+                            <div class="glass-card wizard-option-card" onclick="WizardModule.selectCategory('Línea Automotor')" style="cursor: pointer; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); border-radius: 12px;">
                                 <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚚</div>
-                                <h4 style="margin-bottom: 0.35rem; color: var(--text-primary);">Línea Automotriz</h4>
+                                <h4 style="margin-bottom: 0.35rem; color: var(--text-primary);">Línea Automotor</h4>
                                 <p style="font-size: 0.8rem; color: var(--text-secondary);">Pick-ups, camiones, tractores, colectivos y motores diésel de 150 a 1.200 HP.</p>
                             </div>
-                            <div class="glass-card wizard-option-card" onclick="WizardModule.selectCategory('Línea Abastecimiento')" style="cursor: pointer; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); border-radius: 12px;">
+                            <div class="glass-card wizard-option-card" onclick="WizardModule.selectCategory('Línea Industrial')" style="cursor: pointer; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); border-radius: 12px;">
                                 <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⛽</div>
-                                <h4 style="margin-bottom: 0.35rem; color: var(--text-primary);">Línea Abastecimiento</h4>
+                                <h4 style="margin-bottom: 0.35rem; color: var(--text-primary);">Línea Industrial</h4>
                                 <p style="font-size: 0.8rem; color: var(--text-secondary);">Filtrado en surtidores y tanques de almacenamiento estacionarios (3.000 a 50.000 L/h).</p>
                             </div>
                             <div class="glass-card wizard-option-card" onclick="WizardModule.selectCategory('Línea Limpieza')" style="cursor: pointer; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); border-radius: 12px;">
@@ -3268,8 +3268,6 @@
                             <option value="Línea Automotor">Línea Automotor</option>
                             <option value="Línea Industrial">Línea Industrial</option>
                             <option value="Refil y Cartuchos">Refil y Cartuchos</option>
-                            <option value="Línea Automotriz">Línea Automotriz</option>
-                            <option value="Línea Abastecimiento">Línea Abastecimiento</option>
                             <option value="Línea Limpieza">Línea Limpieza</option>
                         </select>
                     </div>
@@ -4534,17 +4532,7 @@
                 color: "#0284c7",
                 svg: `<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>`
             },
-            "Línea Automotriz": {
-                gradient: "linear-gradient(135deg, #0284c7, #0f172a)",
-                color: "#0284c7",
-                svg: `<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>`
-            },
             "Línea Industrial": {
-                gradient: "linear-gradient(135deg, #0f766e, #0f172a)",
-                color: "#0f766e",
-                svg: `<path d="M19.78 7.8c-.37-.37-.97-.37-1.34 0L15 11.24V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-6.28l3.41-3.41c.37-.38.37-1 .01-1.38l-1.64-1.64zM12 19H6v-5h6v5zm0-7H6V5h6v7zm6-4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>`
-            },
-            "Línea Abastecimiento": {
                 gradient: "linear-gradient(135deg, #0f766e, #0f172a)",
                 color: "#0f766e",
                 svg: `<path d="M19.78 7.8c-.37-.37-.97-.37-1.34 0L15 11.24V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-6.28l3.41-3.41c.37-.38.37-1 .01-1.38l-1.64-1.64zM12 19H6v-5h6v5zm0-7H6V5h6v7zm6-4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>`
@@ -6756,7 +6744,7 @@
                 // Clear fields
                 document.getElementById("modalProductId").value = "";
                 document.getElementById("modalProductName").value = "";
-                document.getElementById("modalProductCategory").value = "Línea Automotriz";
+                document.getElementById("modalProductCategory").value = "Línea Automotor";
                 document.getElementById("modalProductSku").value = "";
                 document.getElementById("modalProductSku").disabled = false;
                 document.getElementById("modalProductCurrency").value = "ARS";
@@ -7411,7 +7399,7 @@
                 AppStore.sales.forEach(sale => {
                     sale.items.forEach(item => {
                         const prod = AppStore.products.find(p => p.id === item.productId);
-                        const cat = prod ? prod.category : "Línea Automotriz"; // default fallback
+                        const cat = prod ? prod.category : "Línea Automotor"; // default fallback
                         if (catSales[cat] !== undefined) {
                             catSales[cat] += item.quantity * item.price;
                         } else {
@@ -7969,14 +7957,14 @@
                     const autoSpecs = document.getElementById("wizardSpecsAutomotriz");
                     const abastSpecs = document.getElementById("wizardSpecsAbastecimiento");
                     
-                    if (this.selectedCategory === "Línea Automotriz") {
+                    if (this.selectedCategory === "Línea Automotor") {
                         autoSpecs.style.display = "flex";
                         abastSpecs.style.display = "none";
-                        document.getElementById("wizardStep2Title").textContent = "Paso 2: Potencia de Motor (Automotriz)";
+                        document.getElementById("wizardStep2Title").textContent = "Paso 2: Potencia de Motor (Automotor)";
                     } else {
                         autoSpecs.style.display = "none";
                         abastSpecs.style.display = "flex";
-                        document.getElementById("wizardStep2Title").textContent = "Paso 2: Caudal de Despacho (Abastecimiento)";
+                        document.getElementById("wizardStep2Title").textContent = "Paso 2: Caudal de Despacho (Industrial)";
                     }
                 } else if (this.currentStep === 3) {
                     document.getElementById("wizardStep3").style.display = "block";
@@ -8387,7 +8375,7 @@ CONDICIONES COMERCIALES (SÓLO SI PREGUNTA EXPRESAMENTE POR PRECIO):
 ============================================================
 LISTA DE PRECIOS OFICIALES DE REFERENCIA (USO INTERNO / SI EL CLIENTE LO PIDE):
 ============================================================
-LÍNEA AUTOMOTRIZ:
+LÍNEA AUTOMOTOR:
 - LPZ-150R (hasta 150 CV): Lista USD $442.56 | Contado (-16%) USD $371.18
 - LPZ-250R (hasta 250 CV): Lista USD $485.50 | Contado (-16%) USD $407.19
 - LPZ-250R-AL (hasta 250 CV Alum): Lista USD $712.80 | Contado (-16%) USD $597.83
@@ -8395,7 +8383,7 @@ LÍNEA AUTOMOTRIZ:
 - LPZ-900R (hasta 800 CV): Lista USD $559.04 | Contado (-16%) USD $468.87
 - LPZ-1200R / LPZ-1200U (hasta 1200 CV): Lista USD $631.14 / $640.04 | Contado (-16%) USD $529.34 / $536.81
 
-LÍNEA INDUSTRIAL / ABASTECIMIENTO:
+LÍNEA INDUSTRIAL:
 - LPZT-800D (25 L/min): Lista USD $1,374.11 | Contado (-16%) USD $1,152.48
 - LPZA-3000S (50 L/min): Lista USD $3,724.18 | Contado (-16%) USD $3,123.50
 - LPZA-4000S (66 L/min - Más vendido): Lista USD $3,962.54 | Contado (-16%) USD $3,323.42
@@ -8840,7 +8828,7 @@ TONO Y ESTILO:
 Devuelve ÚNICAMENTE un objeto JSON válido con los siguientes campos completos y profesionales:
 {
   "name": "Nombre comercial completo profesional (Ej: Purificador Electrostático P250R)",
-  "category": "Una de estas tres opciones exactas: Línea Automotriz, Línea Abastecimiento o Línea Limpieza",
+  "category": "Una de estas tres opciones exactas: Línea Automotor, Línea Industrial o Línea Limpieza",
   "sku": "Código de modelo corto en mayúsculas (Ej: P250R, PA3000S, PT800D)",
   "currency": "ARS o USD",
   "price": número estimado de precio de venta en ARS o USD (Ej: 210000),
