@@ -2,3 +2,5 @@
 *.backup*
 .DS_Store
 Thumbs.db
+/*.mp4
+as.jpg
