@@ -2117,6 +2117,58 @@
             justify-content: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
+        .sidebar-ecologia-audio-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(16, 185, 129, 0.18);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            color: #10b981;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sidebar-ecologia-audio-btn:hover {
+            background: #10b981;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .sidebar-ecologia-audio-btn.unmuted {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+        }
+        .sidebar-ecologia-audio-btn.unmuted:hover {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+        .sidebar-ecologia-sound-badge {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sidebar-ecologia-sound-badge:hover {
+            background: rgba(16, 185, 129, 0.9);
+            border-color: #10b981;
+            transform: scale(1.05);
+        }
 
         /* ==================================================== */
         /* ACCESO ESPECIAL (BARRA LATERAL Y VENTANA MODAL)      */
@@ -2422,21 +2474,26 @@
                 </li>
             </ul>
 
-            <!-- VIDEO DESTACADO: PURIFILT ARGENTINA – ECOLOGÍA (REPRODUCCIÓN AUTOMÁTICA SILENCIOSA) -->
+            <!-- VIDEO DESTACADO: PURIFILT ARGENTINA – ECOLOGÍA (REPRODUCCIÓN AUTOMÁTICA SILENCIOSA CON OPCIÓN DE AUDIO) -->
             <div class="sidebar-ecologia-container" id="sidebarEcologiaContainer">
                 <div class="sidebar-ecologia-header">
                     <span class="sidebar-ecologia-title">
                         <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                         Purifilt &bull; Ecología
                     </span>
-                    <button type="button" id="btnToggleEcologiaMute" onclick="SidebarEcologiaModule.toggleAudio()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; font-size: 0.72rem; display: flex; align-items: center;" title="Activar/Desactivar Sonido">
-                        🔇
+                    <button type="button" class="sidebar-ecologia-audio-btn" id="btnToggleEcologiaMute" onclick="SidebarEcologiaModule.toggleAudio(event)" title="Activar / Desactivar Sonido">
+                        <span id="sidebarEcologiaAudioIcon">🔇</span>
+                        <span id="sidebarEcologiaAudioText">Audio</span>
                     </button>
                 </div>
                 <div class="sidebar-ecologia-video-wrap" onclick="SidebarEcologiaModule.togglePlay()" title="Pausar / Reanudar video Ecología">
                     <video id="sidebarEcologiaVideo" class="sidebar-ecologia-video" autoplay loop muted playsinline preload="auto" poster="videos/purifilt-argentina-ecologia.jpg">
                         <source src="videos/purifilt-argentina-ecologia.mp4" type="video/mp4">
                     </video>
+                    <div class="sidebar-ecologia-sound-badge" id="sidebarEcologiaSoundBadge" onclick="SidebarEcologiaModule.toggleAudio(event)" title="Activar sonido con un clic">
+                        <span id="sidebarEcologiaBadgeIcon">🔇</span>
+                        <span id="sidebarEcologiaBadgeText">Toca para escuchar</span>
+                    </div>
                     <div class="sidebar-ecologia-overlay-btn" id="sidebarEcologiaOverlay">
                         <div class="sidebar-ecologia-play-icon" id="sidebarEcologiaPlayIcon">
                             <svg style="width: 14px; height: 14px; fill: currentColor; margin-left: 2px;" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -9555,14 +9612,40 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
                 }
             },
 
-            toggleAudio() {
-                if (!this.video) return;
-                this.video.muted = !this.video.muted;
-                const btn = document.getElementById("btnToggleEcologiaMute");
-                if (btn) {
-                    btn.textContent = this.video.muted ? "🔇" : "🔊";
-                    btn.title = this.video.muted ? "Activar Sonido" : "Silenciar";
+            toggleAudio(e) {
+                if (e && typeof e.stopPropagation === "function") {
+                    e.stopPropagation();
                 }
+                if (!this.video) return;
+                
+                this.video.muted = !this.video.muted;
+                if (!this.video.muted) {
+                    this.video.volume = 1.0;
+                    if (this.video.paused) {
+                        this.video.play().catch(() => {});
+                    }
+                }
+
+                const isMuted = this.video.muted;
+                const btn = document.getElementById("btnToggleEcologiaMute");
+                const icon = document.getElementById("sidebarEcologiaAudioIcon");
+                const text = document.getElementById("sidebarEcologiaAudioText");
+                const badge = document.getElementById("sidebarEcologiaSoundBadge");
+                const badgeIcon = document.getElementById("sidebarEcologiaBadgeIcon");
+                const badgeText = document.getElementById("sidebarEcologiaBadgeText");
+
+                if (btn) {
+                    btn.classList.toggle("unmuted", !isMuted);
+                    btn.title = isMuted ? "Activar Sonido" : "Silenciar";
+                }
+                if (icon) icon.textContent = isMuted ? "🔇" : "🔊";
+                if (text) text.textContent = isMuted ? "Audio" : "Activo";
+
+                if (badge) {
+                    badge.style.display = isMuted ? "flex" : "none";
+                }
+                if (badgeIcon) badgeIcon.textContent = isMuted ? "🔇" : "🔊";
+                if (badgeText) badgeText.textContent = isMuted ? "Toca para escuchar" : "Silenciar";
             },
 
             updateOverlayUI(isPaused) {
