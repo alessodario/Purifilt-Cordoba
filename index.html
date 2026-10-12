@@ -935,6 +935,22 @@
             #labVideosTabContainer {
                 grid-template-columns: 1fr !important;
             }
+            #appVideosTabContainer {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        .app-video-badge-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            margin-bottom: 2px;
+            display: inline-block;
+            width: fit-content;
         }
         .modal-header {
             padding: 1.25rem 1.5rem;
@@ -2316,6 +2332,16 @@
                         </svg>
                         <span>Pruebas en Laboratorio</span>
                         <span style="margin-left: auto; font-size: 0.65rem; background: rgba(2, 132, 199, 0.15); color: var(--accent-primary); padding: 2px 6px; border-radius: 6px; font-weight: 700; letter-spacing: 0.04em; border: 1px solid rgba(2, 132, 199, 0.3);">VIDEOS</span>
+                    </a>
+                </li>
+                <!-- CUARTA SOLAPA: APLICACIONES EN CAMPO (VIDEOS EXPLICATIVOS) -->
+                <li class="nav-item" id="navItemAppVideos">
+                    <a onclick="AppVideosModule.open()" title="Ver Videos Explicativos de Aplicación en Pick-ups, Agro, Maquinaria, Cisternas y Barcos">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span>Aplicaciones en Campo</span>
+                        <span style="margin-left: auto; font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 6px; border-radius: 6px; font-weight: 700; letter-spacing: 0.04em; border: 1px solid rgba(16, 185, 129, 0.3);">EN ACCIÓN</span>
                     </a>
                 </li>
             </ul>
@@ -4030,6 +4056,79 @@
                     PURIFILT Argentina &bull; Ensayos Técnicos Homologados
                 </span>
                 <button type="button" class="btn btn-primary" onclick="LabVideosModule.close()" style="padding: 0.5rem 1.25rem; font-weight: 600;">
+                    Cerrar Visor
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 13: APLICACIONES EN CAMPO (VIDEOS EXPLICATIVOS DE USO Y MONTAJE) -->
+    <div class="modal-overlay" id="appVideosModal" onclick="if(event.target === this) AppVideosModule.close()">
+        <div class="modal-box" style="max-width: 1020px; width: 95%; max-height: 94vh; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);">
+            
+            <!-- HEADER DEL MODAL -->
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 1.25rem 1.75rem; background: var(--bg-card); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <svg style="width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="modal-title" style="font-weight: 800; color: var(--text-primary); font-size: 1.25rem; margin: 0; line-height: 1.2;">
+                            Aplicaciones en Campo &bull; Quién, Cómo y Dónde se Utiliza
+                        </h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                            Guías de montaje, funcionamiento real y protección en Pick-ups, Maquinaria Vial, Tractores, Cisternas y Embarcaciones.
+                        </p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="AppVideosModule.close()" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); font-size: 1.2rem; transition: all 0.2s ease;">&times;</button>
+            </div>
+
+            <!-- BODY: SELECTOR DE VIDEOS EN GRILLA + REPRODUCTOR -->
+            <div class="modal-body" style="padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem;">
+                
+                <!-- SELECTOR DE VIDEOS (GRILLA 4x2 O SCROLL) -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.65rem;" id="appVideosTabContainer">
+                    <!-- Los botones se generan dinámicamente o por plantilla -->
+                </div>
+
+                <!-- CONTENEDOR REPRODUCTOR DE VIDEO -->
+                <div style="background: #000; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); position: relative; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); display: flex; justify-content: center; align-items: center; min-height: 380px; max-height: 520px;">
+                    <video id="appMainVideoPlayer" controls playsinline preload="metadata" style="max-height: 520px; width: 100%; object-fit: contain; background: #000;">
+                        <source id="appVideoSource" src="" type="video/mp4">
+                        Tu navegador no soporta reproducción de video HTML5.
+                    </video>
+                </div>
+
+                <!-- FICHA TÉCNICA DEL VIDEO ACTIVO -->
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                            <span id="appVideoTagBadge" class="app-video-badge-tag">AUTOMOTOR</span>
+                            <span id="appVideoBadge" style="font-size: 0.72rem; font-weight: 700; color: #fff; background: #10b981; padding: 2px 8px; border-radius: 6px; letter-spacing: 0.03em;">VIDEO 1 DE 8</span>
+                            <h4 id="appVideoCurrentTitle" style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin: 0;">Título</h4>
+                        </div>
+                        <p id="appVideoCurrentDesc" style="font-size: 0.825rem; color: var(--text-secondary); margin: 0; line-height: 1.45;">
+                            Descripción explicativa.
+                        </p>
+                    </div>
+                    <a id="appVideoDownloadBtn" href="#" download class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.85rem; display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;">
+                        <svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Descargar Video
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- FOOTER DEL MODAL -->
+            <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 1rem 1.75rem; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card);">
+                <span style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                    PURIFILT &bull; Quién, Cómo y Dónde se utilizan nuestros purificadores
+                </span>
+                <button type="button" class="btn btn-primary" onclick="AppVideosModule.close()" style="padding: 0.5rem 1.25rem; font-weight: 600; background: #10b981; border-color: #10b981;">
                     Cerrar Visor
                 </button>
             </div>
@@ -9075,12 +9174,179 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
 
         window.LabVideosModule = LabVideosModule;
 
-        // Escuchar tecla Escape para cerrar modal de videos
+        // ================================================
+        // MÓDULO: APLICACIONES EN CAMPO (VIDEOS EXPLICATIVOS)
+        // ================================================
+        const AppVideosModule = {
+            videos: [
+                {
+                    badge: "VIDEO 1 DE 8",
+                    tag: "PICK-UPS / INSTALACIÓN",
+                    title: "Adaptación y Colocación de Purificadores en Pick-ups",
+                    sub: "Montaje paso a paso en pick-ups",
+                    desc: "Tutorial técnico detallado del procedimiento de adaptación, conexionado de mangueras de entrada/salida y fijación en el vano motor de pick-ups medianas.",
+                    src: "videos/aplicaciones/01-adaptacion-colocacion-pickups.mp4",
+                    poster: "videos/aplicaciones/01-adaptacion-colocacion-pickups.jpg"
+                },
+                {
+                    badge: "VIDEO 2 DE 8",
+                    tag: "MAQUINARIA PESADA",
+                    title: "Purifilt en Maquinaria Caterpillar",
+                    sub: "Protección en motores diésel de gran porte",
+                    desc: "Aplicación y funcionamiento en retroexcavadoras y palas cargadoras Caterpillar: retención total de micropartículas y separación de agua en condiciones extremas de obra.",
+                    src: "videos/aplicaciones/02-purifilt-caterpillar-maquinaria-pesada.mp4",
+                    poster: "videos/aplicaciones/02-purifilt-caterpillar-maquinaria-pesada.jpg"
+                },
+                {
+                    badge: "VIDEO 3 DE 8",
+                    tag: "SECTOR AGRO",
+                    title: "Purifilt en Tractores New Holland",
+                    sub: "Rendimiento diésel en el agro",
+                    desc: "Demostración de instalación en tractores New Holland trabajando en cosecha y siembra, evitando paradas de máquina por contaminación en el combustible de campo.",
+                    src: "videos/aplicaciones/03-purifilt-new-holland-tractores-agro.mp4",
+                    poster: "videos/aplicaciones/03-purifilt-new-holland-tractores-agro.jpg"
+                },
+                {
+                    badge: "VIDEO 4 DE 8",
+                    tag: "LÍNEA INDUSTRIAL",
+                    title: "Purifilt Industrial en Cisternas y Tanques",
+                    sub: "Abastecimiento de gran caudal",
+                    desc: "Purificación en surtidores y cisternas de acopio diésel estacionarias (3.000 a 50.000 L/h). Limpieza antes del despacho a flotas y tanques de distribución.",
+                    src: "videos/aplicaciones/04-purifilt-industrial-cisternas-tanques.mp4",
+                    poster: "videos/aplicaciones/04-purifilt-industrial-cisternas-tanques.jpg"
+                },
+                {
+                    badge: "VIDEO 5 DE 8",
+                    tag: "SECTOR NAVAL",
+                    title: "Equipamiento a Bordo de Barcos",
+                    sub: "Protección náutica y marina",
+                    desc: "Instalación en salas de máquinas de embarcaciones. Decantación continua de condensación marina y humedad crítica en navegación prolongada.",
+                    src: "videos/aplicaciones/05-equipamiento-a-bordo-de-barcos-maritimo.mp4",
+                    poster: "videos/aplicaciones/05-equipamiento-a-bordo-de-barcos-maritimo.jpg"
+                },
+                {
+                    badge: "VIDEO 6 DE 8",
+                    tag: "MODELO LPZ-800U",
+                    title: "Adaptación y Colocación Purifilt LPZ800U",
+                    sub: "Montaje con cabezal universal",
+                    desc: "Guía de montaje del modelo universal LPZ-800U para reemplazo directo o acople al filtro original de fábrica sin modificar la estructura del vehículo.",
+                    src: "videos/aplicaciones/06-adaptacion-colocacion-lpz800u.mp4",
+                    poster: "videos/aplicaciones/06-adaptacion-colocacion-lpz800u.jpg"
+                },
+                {
+                    badge: "VIDEO 7 DE 8",
+                    tag: "MODELO LPZ-900R",
+                    title: "Adaptación y Colocación Purifilt LPZ900R",
+                    sub: "Equipos pesados hasta 800 CV",
+                    desc: "Explicación práctica de montaje del purificador LPZ-900R para camiones de ruta, colectivos de larga distancia y grupos electrógenos de alta potencia.",
+                    src: "videos/aplicaciones/07-adaptacion-colocacion-lpz900r.mp4",
+                    poster: "videos/aplicaciones/07-adaptacion-colocacion-lpz900r.jpg"
+                },
+                {
+                    badge: "VIDEO 8 DE 8",
+                    tag: "PROTECCIÓN TOTAL",
+                    title: "¿Tenés una Pick-up? Protegé tu Inyección Common Rail",
+                    sub: "Hilux, Amarok, Ranger, S10, Frontier",
+                    desc: "Por qué los purificadores Purifilt blindan el sistema de inyección electrónica Common Rail ante el combustible diésel adulterado o con agua.",
+                    src: "videos/aplicaciones/08-proteccion-inyeccion-pickups-todas-marcas.mp4",
+                    poster: "videos/aplicaciones/08-proteccion-inyeccion-pickups-todas-marcas.jpg"
+                }
+            ],
+            currentIndex: 0,
+            rendered: false,
+
+            initTabs() {
+                if (this.rendered) return;
+                const container = document.getElementById("appVideosTabContainer");
+                if (!container) return;
+
+                container.innerHTML = this.videos.map((v, i) => `
+                    <button type="button" class="lab-video-tab-btn ${i === 0 ? 'active' : ''}" id="appTabBtn-${i}" onclick="AppVideosModule.selectVideo(${i})">
+                        <div class="lab-tab-num" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">0${i + 1}</div>
+                        <div class="lab-tab-info">
+                            <span class="app-video-badge-tag">${v.tag}</span>
+                            <span class="lab-tab-title" title="${v.title}">${v.title}</span>
+                            <span class="lab-tab-sub">${v.sub}</span>
+                        </div>
+                    </button>
+                `).join("");
+                this.rendered = true;
+            },
+
+            open(index = 0) {
+                this.initTabs();
+                const modal = document.getElementById("appVideosModal");
+                if (modal) {
+                    modal.classList.add("active");
+                    this.selectVideo(index);
+                }
+            },
+
+            close() {
+                const modal = document.getElementById("appVideosModal");
+                const player = document.getElementById("appMainVideoPlayer");
+                if (player) {
+                    player.pause();
+                }
+                if (modal) {
+                    modal.classList.remove("active");
+                }
+            },
+
+            selectVideo(index) {
+                if (index < 0 || index >= this.videos.length) return;
+                this.currentIndex = index;
+                const v = this.videos[index];
+
+                // Actualizar clases de botones
+                for (let i = 0; i < this.videos.length; i++) {
+                    const btn = document.getElementById(`appTabBtn-${i}`);
+                    if (btn) {
+                        if (i === index) {
+                            btn.classList.add("active");
+                        } else {
+                            btn.classList.remove("active");
+                        }
+                    }
+                }
+
+                // Actualizar reproductor de video
+                const player = document.getElementById("appMainVideoPlayer");
+                const badgeTagEl = document.getElementById("appVideoTagBadge");
+                const badgeEl = document.getElementById("appVideoBadge");
+                const titleEl = document.getElementById("appVideoCurrentTitle");
+                const descEl = document.getElementById("appVideoCurrentDesc");
+                const dlBtn = document.getElementById("appVideoDownloadBtn");
+
+                if (player) {
+                    const wasPlaying = !player.paused && player.currentTime > 0;
+                    player.poster = v.poster || "";
+                    player.src = v.src;
+                    player.load();
+                    if (wasPlaying) {
+                        player.play().catch(() => {});
+                    }
+                }
+                if (badgeTagEl) badgeTagEl.textContent = v.tag;
+                if (badgeEl) badgeEl.textContent = v.badge;
+                if (titleEl) titleEl.textContent = v.title;
+                if (descEl) descEl.textContent = v.desc;
+                if (dlBtn) dlBtn.href = v.src;
+            }
+        };
+
+        window.AppVideosModule = AppVideosModule;
+
+        // Escuchar tecla Escape para cerrar modales de videos
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
                 const labModal = document.getElementById("labVideosModal");
                 if (labModal && labModal.classList.contains("active")) {
                     LabVideosModule.close();
+                }
+                const appModal = document.getElementById("appVideosModal");
+                if (appModal && appModal.classList.contains("active")) {
+                    AppVideosModule.close();
                 }
             }
         });
