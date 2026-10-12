@@ -2043,6 +2043,82 @@
         }
 
         /* ==================================================== */
+        /* VIDEO ECOLOGÍA EN BARRA LATERAL                     */
+        /* ==================================================== */
+        .sidebar-ecologia-container {
+            margin-top: 0.85rem;
+            margin-bottom: 0.75rem;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .sidebar-ecologia-container:hover {
+            border-color: #10b981;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);
+        }
+        .sidebar-ecologia-header {
+            padding: 0.4rem 0.65rem;
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(2, 132, 199, 0.1));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-ecologia-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .sidebar-ecologia-video-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .sidebar-ecologia-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .sidebar-ecologia-overlay-btn {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .sidebar-ecologia-video-wrap:hover .sidebar-ecologia-overlay-btn {
+            opacity: 1;
+        }
+        .sidebar-ecologia-play-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.9);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* ==================================================== */
         /* ACCESO ESPECIAL (BARRA LATERAL Y VENTANA MODAL)      */
         /* ==================================================== */
         .sidebar-special-access-container {
@@ -2345,6 +2421,29 @@
                     </a>
                 </li>
             </ul>
+
+            <!-- VIDEO DESTACADO: PURIFILT ARGENTINA – ECOLOGÍA (REPRODUCCIÓN AUTOMÁTICA SILENCIOSA) -->
+            <div class="sidebar-ecologia-container" id="sidebarEcologiaContainer">
+                <div class="sidebar-ecologia-header">
+                    <span class="sidebar-ecologia-title">
+                        <svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        Purifilt &bull; Ecología
+                    </span>
+                    <button type="button" id="btnToggleEcologiaMute" onclick="SidebarEcologiaModule.toggleAudio()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; font-size: 0.72rem; display: flex; align-items: center;" title="Activar/Desactivar Sonido">
+                        🔇
+                    </button>
+                </div>
+                <div class="sidebar-ecologia-video-wrap" onclick="SidebarEcologiaModule.togglePlay()" title="Pausar / Reanudar video Ecología">
+                    <video id="sidebarEcologiaVideo" class="sidebar-ecologia-video" autoplay loop muted playsinline preload="auto" poster="videos/purifilt-argentina-ecologia.jpg">
+                        <source src="videos/purifilt-argentina-ecologia.mp4" type="video/mp4">
+                    </video>
+                    <div class="sidebar-ecologia-overlay-btn" id="sidebarEcologiaOverlay">
+                        <div class="sidebar-ecologia-play-icon" id="sidebarEcologiaPlayIcon">
+                            <svg style="width: 14px; height: 14px; fill: currentColor; margin-left: 2px;" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- SOLAPA ACCESO ESPECIAL (MARGEN INFERIOR IZQUIERDO - MISMO TAMAÑO QUE LAS OTRAS SOLAPAS) -->
             <div class="sidebar-special-access-container">
@@ -6096,6 +6195,7 @@
             },
 
             focusCart() {
+                if (window.SidebarEcologiaModule) SidebarEcologiaModule.pause();
                 // Ir a la solapa del catálogo si no está activa
                 const navCatalog = document.querySelector('.nav-item[data-target="catalog"]');
                 if (navCatalog && !navCatalog.classList.contains("active")) {
@@ -9165,6 +9265,7 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
             currentIndex: 0,
 
             open(index = 0) {
+                if (window.SidebarEcologiaModule) SidebarEcologiaModule.pause();
                 const modal = document.getElementById("labVideosModal");
                 if (modal) {
                     modal.classList.add("active");
@@ -9325,6 +9426,7 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
             },
 
             open(index = 0) {
+                if (window.SidebarEcologiaModule) SidebarEcologiaModule.pause();
                 this.initTabs();
                 const modal = document.getElementById("appVideosModal");
                 if (modal) {
@@ -9387,6 +9489,104 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
         };
 
         window.AppVideosModule = AppVideosModule;
+
+        // ================================================
+        // MÓDULO: VIDEO ECOLOGÍA (BARRA LATERAL)
+        // ================================================
+        const SidebarEcologiaModule = {
+            video: null,
+
+            init() {
+                this.video = document.getElementById("sidebarEcologiaVideo");
+                if (!this.video) return;
+
+                // Intentar reproducción inicial silenciosa (garantizada por navegadores)
+                this.video.muted = true;
+                const playPromise = this.video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Si el navegador bloqueó el autoplay inicial, esperar primera interacción del usuario
+                        const startOnUserClick = () => {
+                            if (this.video) {
+                                this.video.play().catch(() => {});
+                            }
+                            document.removeEventListener("click", startOnUserClick);
+                            document.removeEventListener("touchstart", startOnUserClick);
+                        };
+                        document.addEventListener("click", startOnUserClick, { once: true });
+                        document.addEventListener("touchstart", startOnUserClick, { once: true });
+                    });
+                }
+
+                // Escuchar eventos en el carrito para pausar el video si el usuario interactúa
+                const cartAside = document.querySelector(".cart-aside");
+                if (cartAside) {
+                    cartAside.addEventListener("click", () => this.pause());
+                    cartAside.addEventListener("mouseenter", () => this.pause());
+                }
+
+                // Pausar también si hace clic en el botón de checkout o cotización
+                const btnCheckout = document.getElementById("btnCheckout");
+                if (btnCheckout) {
+                    btnCheckout.addEventListener("click", () => this.pause());
+                }
+            },
+
+            pause() {
+                if (this.video && !this.video.paused) {
+                    this.video.pause();
+                    this.updateOverlayUI(true);
+                }
+            },
+
+            play() {
+                if (this.video && this.video.paused) {
+                    this.video.play().catch(() => {});
+                    this.updateOverlayUI(false);
+                }
+            },
+
+            togglePlay() {
+                if (!this.video) return;
+                if (this.video.paused) {
+                    this.play();
+                } else {
+                    this.pause();
+                }
+            },
+
+            toggleAudio() {
+                if (!this.video) return;
+                this.video.muted = !this.video.muted;
+                const btn = document.getElementById("btnToggleEcologiaMute");
+                if (btn) {
+                    btn.textContent = this.video.muted ? "🔇" : "🔊";
+                    btn.title = this.video.muted ? "Activar Sonido" : "Silenciar";
+                }
+            },
+
+            updateOverlayUI(isPaused) {
+                const overlay = document.getElementById("sidebarEcologiaOverlay");
+                const icon = document.getElementById("sidebarEcologiaPlayIcon");
+                if (overlay) {
+                    overlay.style.opacity = isPaused ? "1" : "";
+                }
+                if (icon) {
+                    icon.innerHTML = isPaused 
+                        ? `<svg style="width: 14px; height: 14px; fill: currentColor; margin-left: 2px;" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`
+                        : `<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+                }
+            }
+        };
+
+        window.SidebarEcologiaModule = SidebarEcologiaModule;
+
+        // Iniciar video ecología cuando el DOM esté listo
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => SidebarEcologiaModule.init());
+        } else {
+            SidebarEcologiaModule.init();
+        }
 
         // Escuchar tecla Escape para cerrar modales de videos
         document.addEventListener("keydown", (e) => {
