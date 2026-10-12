@@ -5268,6 +5268,7 @@
                 filtered.forEach(p => {
                     const card = document.createElement("div");
                     card.className = "glass-card product-card";
+                    card.id = `product-card-${p.id}`;
                     
                     const catCfg = CATEGORIES_CONFIG[p.category] || { gradient: "linear-gradient(135deg, #1e293b, #0f172a)", color: "#9ca3af", svg: "" };
                     
@@ -6266,6 +6267,39 @@
                         cartAside.style.boxShadow = "";
                     }, 2000);
                 }
+            },
+
+            showProductInCatalog(productId) {
+                // Ir a la solapa del catálogo
+                const navCatalog = document.querySelector('.nav-item[data-target="catalog"]');
+                if (navCatalog && !navCatalog.classList.contains("active")) {
+                    navCatalog.click();
+                }
+
+                // Asegurar que los filtros permitan ver el producto
+                this.searchQuery = "";
+                const searchInput = document.getElementById("catalogSearchInput");
+                if (searchInput) searchInput.value = "";
+                this.selectedCategory = "ALL";
+                const catPills = document.querySelectorAll("#catalogCategoryPills .category-pill");
+                catPills.forEach(p => p.classList.toggle("active", p.dataset.category === "ALL"));
+                this.render();
+
+                setTimeout(() => {
+                    const card = document.getElementById(`product-card-${productId}`);
+                    if (card) {
+                        card.scrollIntoView({ behavior: "smooth", block: "center" });
+                        card.style.transition = "all 0.4s ease";
+                        card.style.boxShadow = "0 0 30px rgba(16, 185, 129, 0.9)";
+                        card.style.borderColor = "#10b981";
+                        card.style.transform = "scale(1.03)";
+                        setTimeout(() => {
+                            card.style.boxShadow = "";
+                            card.style.borderColor = "";
+                            card.style.transform = "";
+                        }, 2500);
+                    }
+                }, 150);
             },
 
             autoAddAndQuote(productId, qty = 1) {
@@ -8665,23 +8699,16 @@ PRODUCTOS CARGADOS EN INVENTARIO LOCAL (TIEMPO REAL):
 ${currentProducts}
 
 ============================================================
-PROTOCOLO ESTRICTO DE ASESORAMIENTO Y COTIZACIÓN (MANDATORIO):
+PROTOCOLO DE ASESORAMIENTO Y RECOMENDACIÓN TÉCNICA (MANDATORIO):
 ============================================================
-1. ASESORAMIENTO REGULAR (CUANDO NO HAN PEDIDO EXPRESAMENTE COTIZACIÓN AUTOMÁTICA):
-   - Brindá el asesoramiento técnico claro y empático recomendando los modelos adecuados a sus necesidades (CV del motor, litros por minuto, etc.).
-   - Indicale al cliente cuáles son los productos exactos recomendados para que pueda verlos y seleccionarlos en el Catálogo de Ventas y armar su pedido en el carrito.
-   - Ofrecele la opción: "Si preferís que te arme la cotización automáticamente con estos equipos, avisame diciendo 'Armámela' o 'Armar cotización'".
-   - NO pidas datos de contacto en este paso si el cliente aún no pidió armar la cotización automáticamente.
+1. ASESORAMIENTO TÉCNICO Y DIAGNÓSTICO:
+   - Brindá asesoramiento técnico claro, empático y experto según la necesidad del cliente (potencia en CV de su vehículo/maquinaria o caudal L/min de su cisterna o surtidor).
+   - Recomendá siempre el modelo exacto (ej: LPZ-250R, LPZ-700U, LPZA-4000S, etc.) explicando con precisión por qué es el indicado y sus beneficios.
 
-2. CUANDO EL CLIENTE PIDE EXPRESAMENTE ARMAR LA COTIZACIÓN AUTOMÁTICAMENTE (Ej: "armámela", "armar cotización", "cotizame", etc.):
-   - El sistema inteligente desplegará de inmediato en el chat un formulario interactivo o solicitará los datos de contacto necesarios:
-     • Razón Social o Nombre completo
-     • CUIT o CUIL
-     • Localidad / Dirección
-     • Teléfono de contacto
-     • Correo Electrónico (Email)
-   - Explicále amablemente: "¡Excelente! Para armarte la cotización formal en el carrito con las condiciones comerciales oficiales, por favor completá tus datos de contacto aquí abajo o escribímelos. En cuanto los tenga, armo tu cotización en el carrito para que puedas imprimirla o enviarla".
-   - Una vez cargados los datos y armado el carrito, indicále con claridad que ingrese al **Carrito de Cotizaciones** (solapa o panel del carrito) para **imprimir o enviar dicha cotización formal**.
+2. SELECCIÓN DESDE EL CATÁLOGO:
+   - Indicále amablemente al cliente que puede ver la ficha técnica completa y fotos del equipo recomendado en la solapa "Catálogo de Ventas", seleccionarlo y presionar el botón "Agregar al Carrito" para armar su pedido de cotización formal.
+   - Dejale en claro que desde el Carrito de Cotizaciones podrá imprimir, guardar en PDF o enviar por WhatsApp/Email la cotización formal con las bonificaciones comerciales oficiales.
+   - NUNCA ofrezcas armar automáticamente la cotización ni pidas datos por anticipado; orientá siempre al cliente a seleccionar el producto del catálogo para que arme su pedido en el carrito.
 
 ============================================================
 TONO Y ESTILO:
@@ -8955,25 +8982,22 @@ TONO Y ESTILO:
                 // Line breaks
                 out = out.replace(/\n/g, "<br>");
 
-                // Botones interactivos de acción cuando el modelo indica productos o invita a cotizar
-                if (out.includes("Catálogo de Ventas") || out.includes("carrito") || out.includes("cotización") || out.includes("cotizar")) {
-                    out += `
-                        <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed rgba(255,255,255,0.15); display: flex; gap: 0.45rem; flex-wrap: wrap;">
-                            <button type="button" class="btn btn-secondary" onclick="CatalogModule.focusCart()" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; border-radius: 8px; border-color: var(--accent-primary); color: var(--accent-primary);">
-                                🛒 Ver Carrito de Cotizaciones
+                // Botones interactivos de acción para que el cliente seleccione el producto del catálogo y arme su pedido en el carrito
+                const detectedProd = this.findLastRecommendedProduct();
+                out += `
+                    <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed rgba(255,255,255,0.15); display: flex; gap: 0.45rem; flex-wrap: wrap;">
+                        ${detectedProd ? `
+                            <button type="button" class="btn btn-primary" onclick="CatalogModule.showProductInCatalog('${detectedProd.id}')" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; border-radius: 8px;">
+                                🔍 Ver ${detectedProd.id} en Catálogo
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="AiModule.requestInstantQuote()" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; border-radius: 8px;">
-                                ⚡ Solicitar Cotización Automática
-                            </button>
-                        </div>
-                    `;
-                }
+                        ` : ''}
+                        <button type="button" class="btn btn-secondary" onclick="CatalogModule.focusCart()" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; border-radius: 8px; border-color: var(--accent-primary); color: var(--accent-primary);">
+                            🛒 Ir al Carrito de Cotizaciones
+                        </button>
+                    </div>
+                `;
 
                 return out;
-            },
-
-            requestInstantQuote() {
-                this.sendUserPrompt("Por favor, armame la cotización automáticamente");
             },
 
             findLastRecommendedProduct() {
@@ -8989,40 +9013,6 @@ TONO Y ESTILO:
                     }
                     if (targetProduct) break;
                 }
-                return targetProduct || AppStore.products.find(p => p.id === "LPZ-250R") || AppStore.products[0];
-            },
-
-            promptCustomerDataForQuote() {
-                // Verificar si ya tenemos datos en el modal de cotización
-                const nameInput = document.getElementById("modalQuoteCustomerName");
-                const cuitInput = document.getElementById("modalQuoteCustomerCuit");
-                const phoneInput = document.getElementById("modalQuoteCustomerPhone");
-                const emailInput = document.getElementById("modalQuoteCustomerEmail");
-
-                const currentName = nameInput ? nameInput.value.trim() : "";
-                const currentPhone = phoneInput ? phoneInput.value.trim() : "";
-                const currentEmail = emailInput ? emailInput.value.trim() : "";
-
-                // Si no hay datos cargados, solicitarlos amablemente
-                if (!currentName || !currentPhone || !currentEmail) {
-                    const promptName = prompt("📋 Para armar tu cotización oficial en el carrito, por favor ingresa tu Nombre o Razón Social:", currentName || "");
-                    if (promptName && promptName.trim()) {
-                        if (nameInput) nameInput.value = promptName.trim();
-                        const promptPhone = prompt("📱 Teléfono / WhatsApp de contacto:", currentPhone || "");
-                        if (promptPhone && phoneInput) phoneInput.value = promptPhone.trim();
-                        const promptEmail = prompt("✉️ Correo Electrónico (para el envío de la cotización):", currentEmail || "");
-                        if (promptEmail && emailInput) emailInput.value = promptEmail.trim();
-                        const promptCuit = prompt("🏛️ CUIT o CUIL (opcional si es consumidor final):", cuitInput ? cuitInput.value : "");
-                        if (promptCuit && cuitInput) cuitInput.value = promptCuit.trim();
-                    }
-                }
-
-                // Cargar producto recomendado en el carrito
-                const targetProduct = this.findLastRecommendedProduct();
-                if (targetProduct && window.CatalogModule) {
-                    CatalogModule.autoAddAndQuote(targetProduct.id, 1);
-                }
-
                 return targetProduct;
             },
 
@@ -9030,18 +9020,6 @@ TONO Y ESTILO:
                 if (!promptText || !promptText.trim() || this.isTyping) return;
                 const text = promptText.trim();
                 this.isTyping = true;
-
-                // Detectar si el usuario pide explícitamente armar la cotización automática
-                const lower = text.toLowerCase();
-                const isAutoQuoteRequest = /armal[ao]|arm[aá]mel[ao]|armar cotizaci[oó]n|armame la cotizaci[oó]n|cotiz[aá]mel[ao]|cargal[ao] al carrito|c[aá]rgal[ao] al carrito|generar cotizaci[oó]n|cotizame|cotizar autom[aá]tico/i.test(lower);
-
-                let addedProdName = "";
-                if (isAutoQuoteRequest) {
-                    const prod = this.promptCustomerDataForQuote();
-                    if (prod) {
-                        addedProdName = prod.name;
-                    }
-                }
 
                 // Push user message to both session and permanent history
                 const userMsg = {
@@ -9056,14 +9034,6 @@ TONO Y ESTILO:
                 try {
                     // Send conversation context to Gemini (using session messages for coherent current dialog)
                     let reply = await this.callGeminiApi(this.sessionChatMessages);
-
-                    // Si pidió armar la cotización automáticamente, asegurar la indicación explícita de ingresar al carrito
-                    if (isAutoQuoteRequest) {
-                        const quoteInstruction = `\n\n---\n📋 **¡Cotización armada con éxito en tu carrito!**\nYa cargué el equipo **${addedProdName || 'recomendado'}** con sus condiciones comerciales. Por favor ingresá al **Carrito de Cotizaciones** (solapa lateral o botón abajo) para **imprimir o enviar tu cotización formal**.`;
-                        if (!reply.toLowerCase().includes("imprimir") && !reply.toLowerCase().includes("enviar")) {
-                            reply += quoteInstruction;
-                        }
-                    }
 
                     const replyMsg = {
                         role: "model",
