@@ -9575,18 +9575,7 @@ Genera un INFORME EJECUTIVO DE DIAGNÓSTICO COMERCIAL profesional, claro y motiv
                     });
                 }
 
-                // Escuchar eventos en el carrito para pausar el video si el usuario interactúa
-                const cartAside = document.querySelector(".cart-aside");
-                if (cartAside) {
-                    cartAside.addEventListener("click", () => this.pause());
-                    cartAside.addEventListener("mouseenter", () => this.pause());
-                }
-
-                // Pausar también si hace clic en el botón de checkout o cotización
-                const btnCheckout = document.getElementById("btnCheckout");
-                if (btnCheckout) {
-                    btnCheckout.addEventListener("click", () => this.pause());
-                }
+                // Nota: el video continúa reproduciéndose libremente sin pausarse por el mouse sobre el carrito
             },
 
             pause() {
